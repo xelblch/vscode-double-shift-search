@@ -1,0 +1,281 @@
+{
+  "name": "search-everywhere-tabs",
+  "displayName": "Search Everywhere Tabs",
+  "description": "JetBrains-style Search Everywhere for VS Code: double Shift opens one palette for files, symbols, actions and text.",
+  "version": "1.0.0",
+  "publisher": "xelblch",
+  "author": "xelblch <https://github.com/xelblch>",
+  "icon": "media/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xelblch/vscode-double-shift-search.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xelblch/vscode-double-shift-search/issues"
+  },
+  "homepage": "https://github.com/xelblch/vscode-double-shift-search#readme",
+  "keywords": [
+    "search",
+    "search everywhere",
+    "double shift",
+    "shift shift",
+    "jetbrains",
+    "intellij",
+    "pycharm",
+    "webstorm",
+    "go to file",
+    "go to symbol",
+    "quick open",
+    "navigate",
+    "find"
+  ],
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Keymaps",
+    "Other"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "searchEverywhereTabs.search",
+        "title": "Search Everywhere Tabs: Open Palette"
+      },
+      {
+        "command": "searchEverywhereTabs.nextTab",
+        "title": "Search Everywhere Tabs: Next Tab"
+      },
+      {
+        "command": "searchEverywhereTabs.previousTab",
+        "title": "Search Everywhere Tabs: Previous Tab"
+      },
+      {
+        "command": "searchEverywhereTabs.toggleMatchCase",
+        "title": "Search Everywhere Tabs: Toggle Match Case"
+      },
+      {
+        "command": "searchEverywhereTabs.toggleWholeWord",
+        "title": "Search Everywhere Tabs: Toggle Whole Word"
+      },
+      {
+        "command": "searchEverywhereTabs.toggleRegex",
+        "title": "Search Everywhere Tabs: Toggle Regex"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "searchEverywhereTabs.nextTab",
+          "when": "false"
+        },
+        {
+          "command": "searchEverywhereTabs.previousTab",
+          "when": "false"
+        },
+        {
+          "command": "searchEverywhereTabs.toggleMatchCase",
+          "when": "false"
+        },
+        {
+          "command": "searchEverywhereTabs.toggleWholeWord",
+          "when": "false"
+        },
+        {
+          "command": "searchEverywhereTabs.toggleRegex",
+          "when": "false"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "searchEverywhereTabs.search",
+        "key": "shift shift"
+      },
+      {
+        "command": "searchEverywhereTabs.nextTab",
+        "key": "tab",
+        "when": "searchEverywhereTabs.paletteVisible && inQuickOpen"
+      },
+      {
+        "command": "searchEverywhereTabs.previousTab",
+        "key": "shift+tab",
+        "when": "searchEverywhereTabs.paletteVisible && inQuickOpen"
+      },
+      {
+        "command": "searchEverywhereTabs.toggleMatchCase",
+        "key": "alt+c",
+        "mac": "alt+cmd+c",
+        "when": "searchEverywhereTabs.paletteVisible && inQuickOpen"
+      },
+      {
+        "command": "searchEverywhereTabs.toggleWholeWord",
+        "key": "alt+w",
+        "mac": "alt+cmd+w",
+        "when": "searchEverywhereTabs.paletteVisible && inQuickOpen"
+      },
+      {
+        "command": "searchEverywhereTabs.toggleRegex",
+        "key": "alt+r",
+        "mac": "alt+cmd+r",
+        "when": "searchEverywhereTabs.paletteVisible && inQuickOpen"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Search Everywhere Tabs",
+      "properties": {
+        "searchEverywhereTabs.useSelectionAsQuery": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically pre-fill the search palette with the text currently selected in the active editor."
+        },
+        "searchEverywhereTabs.rememberLastTab": {
+          "type": "boolean",
+          "default": true,
+          "description": "Reopen the search palette on the tab (All, Classes, Files, Symbols, Actions, Text) that was last used. When disabled, the palette always opens on All. Filters (match case, whole word, regex, file mask, non-project items) are remembered either way."
+        },
+        "searchEverywhereTabs.rememberLastQuery": {
+          "type": "boolean",
+          "default": true,
+          "description": "Reopen the search palette with the last query, selected so typing replaces it. The search runs again, so the results are current. A selection in the editor still wins when useSelectionAsQuery is on."
+        },
+        "searchEverywhereTabs.maxRecentFiles": {
+          "type": "number",
+          "default": 10,
+          "description": "The maximum number of recent files to store and display at the top of the search palette."
+        },
+        "searchEverywhereTabs.excludeExtensions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            ".zip",
+            ".tar",
+            ".gz",
+            ".7z",
+            ".rar",
+            ".exe",
+            ".dll",
+            ".png",
+            ".jpg",
+            ".jpeg",
+            ".gif",
+            ".ico",
+            ".pdf",
+            ".mp4",
+            ".mp3",
+            ".pdb",
+            ".so",
+            ".dylib",
+            ".a",
+            ".lib",
+            ".o",
+            ".obj",
+            ".class",
+            ".jar",
+            ".pyc",
+            ".nupkg",
+            ".woff",
+            ".woff2",
+            ".ttf",
+            ".otf",
+            ".db",
+            ".sqlite"
+          ],
+          "description": "A list of file extensions that should be completely ignored when performing a deep text search."
+        },
+        "searchEverywhereTabs.defaultExcludes": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Hide common dependency, build, cache and tool folders: `node_modules`, `.venv`, `venv`, `bower_components`, `dist`, `build`, `out`, `.next`, `.nuxt`, `.output`, `coverage`, `__pycache__`, `.pytest_cache`, `.mypy_cache`, `.tox`, `.cache`, `.gradle`, `.git`, `.idea`, `.vscode-test`, `.omc`, `.playwright-mcp`. `#searchEverywhereTabs.excludeFolders#` adds to this list. The Include Non-Project Items button still shows everything."
+        },
+        "searchEverywhereTabs.excludeFolders": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Folder names to hide from search results, on top of files.exclude, search.exclude and the built-in list (searchEverywhereTabs.defaultExcludes). Names may use * and ? wildcards, e.g. \"gtaapi-tec-*\" to hide git worktree copies."
+        },
+        "searchEverywhereTabs.maxFiles": {
+          "type": "number",
+          "default": 100000,
+          "minimum": 1,
+          "description": "The maximum number of files to index for the search palette. Acts as a safety cap for very large workspaces."
+        },
+        "searchEverywhereTabs.deprioritizedFolders": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "vendor",
+            "vendors",
+            "bower_components",
+            "third_party",
+            "third-party",
+            "packages",
+            "Pods",
+            "venv",
+            ".venv",
+            "site-packages",
+            "__pycache__",
+            "target",
+            ".gradle",
+            "Carthage",
+            "DerivedData",
+            ".tox",
+            ".mypy_cache",
+            ".pytest_cache",
+            ".next",
+            ".nuxt",
+            "coverage",
+            ".cache"
+          ],
+          "description": "A list of folder names (e.g. vendor, Pods) whose contents are ranked lower in search results instead of being hidden entirely."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "tsc -p ./ && npm run build-ext",
+    "build-ext": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --sourcemap",
+    "watch": "npm-run-all -p watch:*",
+    "watch:tsc": "tsc -watch -p ./",
+    "watch:esbuild": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --sourcemap --watch",
+    "package": "npm run compile && esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --minify",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^22.20.5",
+    "@types/vscode": "^1.74.0",
+    "@typescript-eslint/eslint-plugin": "^5.53.0",
+    "@typescript-eslint/parser": "^5.53.0",
+    "@vscode/test-electron": "^3.1.0",
+    "esbuild": "^0.28.2",
+    "eslint": "^8.34.0",
+    "glob": "^8.1.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "mocha": "^10.2.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "~5.9"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix"
+    ]
+  },
+  "overrides": {
+    "serialize-javascript": "^7.1.0"
+  }
+}

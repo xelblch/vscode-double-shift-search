@@ -1,0 +1,25 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "vscode.typescript-language-features",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.validate": [
+    "typescript",
+    "javascript"
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/node_modules": true,
+    "**/out": true,
+    "**/.vscode-test": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/out": true,
+    "**/.vscode-test": true,
+    "**/package-lock.json": true
+  }
+}

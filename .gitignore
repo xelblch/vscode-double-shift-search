@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+.npm/
+
+# Build output
+out/
+dist/
+*.vsix
+*.tsbuildinfo
+
+# Tests
+.vscode-test/
+coverage/
+test-results/
+
+# Logs and caches
+*.log
+.eslintcache
+
+# Local environment
+.env
+.env.*
+
+# Editors (.vscode/ is shared on purpose)
+.idea/
+.fleet/
+.nova/
+.zed/
+.history/
+*.swp
+*.swo
+*~
+
+# AI tooling
+.claude/settings.local.json
+.omc/
+.playwright-mcp/
+
+# OS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+Thumbs.db
+ehthumbs.db
+desktop.ini
