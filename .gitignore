@@ -21,7 +21,8 @@ test-results/
 .env
 .env.*
 
-# Editors (.vscode/ is shared on purpose)
+# Editors
+.vscode/
 .idea/
 .fleet/
 .nova/

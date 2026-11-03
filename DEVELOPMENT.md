@@ -10,7 +10,7 @@ npx @vscode/vsce package       # build the .vsix
 code --install-extension double-shift-search-tabs-1.0.0.vsix
 ```
 
-Press `F5` in VS Code to try changes in an Extension Development Host. CI runs the tests and builds the
+To try changes, start `npm run watch`, press `F5` in VS Code and pick VS Code Extension Development. CI runs the tests and builds the
 `.vsix` on every push and pull request.
 
 The Marketplace page is `README.md`, so keep it about using the extension; build and release notes belong here.
