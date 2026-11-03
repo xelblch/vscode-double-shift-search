@@ -10,3 +10,8 @@ tsconfig.json
 **/*.map
 **/*.ts
 media/icon.svg
+.github/**
+.husky/**
+.nvmrc
+media/icon-variants/**
+DEVELOPMENT.md

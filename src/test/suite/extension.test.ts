@@ -14,21 +14,21 @@ suite('Extension Test Suite', () => {
   vscode.window.showInformationMessage('Start all tests.');
 
   test('Command is registered', async () => {
-    const ext = vscode.extensions.getExtension('xelblch.search-everywhere-tabs');
+    const ext = vscode.extensions.getExtension('xelblch.double-shift-search-tabs');
     await ext?.activate();
 
     const commands = await vscode.commands.getCommands(true);
-    const hasCommand = commands.includes('searchEverywhereTabs.search');
+    const hasCommand = commands.includes('doubleShiftSearchTabs.search');
     assert.strictEqual(hasCommand, true);
   });
 
   test('Tab and filter commands are registered', async () => {
-    const ext = vscode.extensions.getExtension('xelblch.search-everywhere-tabs');
+    const ext = vscode.extensions.getExtension('xelblch.double-shift-search-tabs');
     await ext?.activate();
 
     const commands = await vscode.commands.getCommands(true);
-    for (const id of ['nextTab', 'previousTab', 'toggleMatchCase', 'toggleWholeWord', 'toggleRegex']) {
-      assert.ok(commands.includes(`searchEverywhereTabs.${id}`), `searchEverywhereTabs.${id} should be registered`);
+    for (const id of ['nextTab', 'previousTab']) {
+      assert.ok(commands.includes(`doubleShiftSearchTabs.${id}`), `doubleShiftSearchTabs.${id} should be registered`);
     }
   });
 });
@@ -122,7 +122,7 @@ suite('Acronym / Hump Fuzzy Matching', () => {
 
 suite('Configuration Edge Cases', () => {
   test('Default configuration values are correct', () => {
-    const config = vscode.workspace.getConfiguration('searchEverywhereTabs');
+    const config = vscode.workspace.getConfiguration('doubleShiftSearchTabs');
     assert.strictEqual(config.get<boolean>('useSelectionAsQuery'), false);
     assert.strictEqual(config.get<boolean>('rememberLastTab'), true);
 
@@ -172,7 +172,7 @@ suite('File Search Edge Cases', () => {
     const pkgJsonUri = vscode.Uri.file(path.join(__dirname, '../../../package.json'));
 
     // Find text that exists
-    const results = await searchFileContents('search-everywhere-tabs', [pkgJsonUri], () => false);
+    const results = await searchFileContents('double-shift-search-tabs', [pkgJsonUri], () => false);
     assert.ok(results.length > 0, 'Should find at least one match for the extension name');
     assert.strictEqual(results[0].type, 'text');
   });
@@ -200,7 +200,7 @@ suite('File Search Edge Cases', () => {
   });
 
   test('searchFileContents keeps the match visible when it falls past the snippet cap on a long line', async () => {
-    const tmpFile = vscode.Uri.file(path.join(os.tmpdir(), `search-everywhere-tabs-long-line-${Date.now()}.txt`));
+    const tmpFile = vscode.Uri.file(path.join(os.tmpdir(), `double-shift-search-tabs-long-line-${Date.now()}.txt`));
     const padding = 'x'.repeat(600);
     const needle = 'NEEDLE_TOKEN';
     await writeFile(tmpFile.fsPath, `${padding}${needle}${padding}`, 'utf8');
@@ -215,7 +215,7 @@ suite('File Search Edge Cases', () => {
   });
 
   test('searchFileContents returns one match per line up to maxMatchesPerFile', async () => {
-    const tmpFile = vscode.Uri.file(path.join(os.tmpdir(), `search-everywhere-tabs-multi-match-${Date.now()}.txt`));
+    const tmpFile = vscode.Uri.file(path.join(os.tmpdir(), `double-shift-search-tabs-multi-match-${Date.now()}.txt`));
     await writeFile(tmpFile.fsPath, 'alpha needle needle\nbeta\nneedle gamma\nNEEDLE delta\nneedle', 'utf8');
 
     try {

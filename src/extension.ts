@@ -81,9 +81,9 @@ const TITLE_LEFT_ALIGN_PADDING = '\u00a0'.repeat(400);
 export function toUnbreakableTitle(text: string): string {
   return text.replace(/ /g, '\u00a0').replace(/-/g, '\u2011') + TITLE_LEFT_ALIGN_PADDING;
 }
-const PALETTE_STATE_KEY = 'searchEverywhereTabs.paletteState';
-const LAST_QUERY_KEY = 'searchEverywhereTabs.lastQuery';
-const PALETTE_VISIBLE_CONTEXT = 'searchEverywhereTabs.paletteVisible';
+const PALETTE_STATE_KEY = 'doubleShiftSearchTabs.paletteState';
+const LAST_QUERY_KEY = 'doubleShiftSearchTabs.lastQuery';
+const PALETTE_VISIBLE_CONTEXT = 'doubleShiftSearchTabs.paletteVisible';
 const SEARCH_DEBOUNCE_MS = 300;
 const ALL_TAB_MAX_ACTIONS = 5;
 const ACTIONS_TAB_MAX_RESULTS = 100;
@@ -100,7 +100,7 @@ const OPEN_TO_SIDE_BUTTON: vscode.QuickInputButton = {
   tooltip: 'Open In Right Split'
 };
 
-// Hidden on top of files.exclude / search.exclude unless searchEverywhereTabs.defaultExcludes is off.
+// Hidden on top of files.exclude / search.exclude unless doubleShiftSearchTabs.defaultExcludes is off.
 // The "Include Non-Project Items" toggle still shows them.
 export const DEFAULT_EXCLUDED_FOLDERS = [
   'node_modules', '.venv', 'venv', 'bower_components',
@@ -179,7 +179,7 @@ export function getExcludePatterns(scope?: vscode.Uri): string[] {
       }
     }
   }
-  const config = vscode.workspace.getConfiguration('searchEverywhereTabs', scope);
+  const config = vscode.workspace.getConfiguration('doubleShiftSearchTabs', scope);
   const excludeFolders = [
     ...(config.get<boolean>('defaultExcludes', true) ? DEFAULT_EXCLUDED_FOLDERS : []),
     ...(config.get<string[]>('excludeFolders') || [])
@@ -246,7 +246,7 @@ export async function getStagedFileUris(): Promise<Set<string>> {
 }
 
 export function getDeprioritizedFolderSet(): Set<string> {
-  const config = vscode.workspace.getConfiguration('searchEverywhereTabs');
+  const config = vscode.workspace.getConfiguration('doubleShiftSearchTabs');
   const folders = config.get<string[]>('deprioritizedFolders') || DEFAULT_DEPRIORITIZED_FOLDERS;
   return new Set(folders.map(f => f.toLowerCase()));
 }
@@ -588,9 +588,9 @@ export function activate(context: vscode.ExtensionContext) {
     if (
       e.affectsConfiguration('files.exclude') ||
       e.affectsConfiguration('search.exclude') ||
-      e.affectsConfiguration('searchEverywhereTabs.excludeFolders') ||
-      e.affectsConfiguration('searchEverywhereTabs.defaultExcludes') ||
-      e.affectsConfiguration('searchEverywhereTabs.maxFiles')
+      e.affectsConfiguration('doubleShiftSearchTabs.excludeFolders') ||
+      e.affectsConfiguration('doubleShiftSearchTabs.defaultExcludes') ||
+      e.affectsConfiguration('doubleShiftSearchTabs.maxFiles')
     ) {
       scheduleRefreshFileCache();
     }
@@ -599,10 +599,10 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.window.onDidChangeActiveTextEditor(editor => {
       if (editor && editor.document.uri.scheme === 'file') {
-        const config = vscode.workspace.getConfiguration('searchEverywhereTabs');
+        const config = vscode.workspace.getConfiguration('doubleShiftSearchTabs');
         const maxRecent = config.get<number>('maxRecentFiles') || 10;
         
-        let recentFiles = context.workspaceState.get<string[]>('searchEverywhereTabs.recentFiles') || [];
+        let recentFiles = context.workspaceState.get<string[]>('doubleShiftSearchTabs.recentFiles') || [];
         const uriString = editor.document.uri.toString();
         
         recentFiles = recentFiles.filter(u => u !== uriString);
@@ -612,22 +612,19 @@ export function activate(context: vscode.ExtensionContext) {
           recentFiles = recentFiles.slice(0, maxRecent);
         }
         
-        context.workspaceState.update('searchEverywhereTabs.recentFiles', recentFiles);
+        context.workspaceState.update('doubleShiftSearchTabs.recentFiles', recentFiles);
       }
     })
   );
 
   context.subscriptions.push(vscode.extensions.onDidChange(() => { cachedCommands = undefined; }));
 
-  let disposable = vscode.commands.registerCommand('searchEverywhereTabs.search', () => showSearchEverywhere(context));
+  let disposable = vscode.commands.registerCommand('doubleShiftSearchTabs.search', () => showSearchEverywhere(context));
   context.subscriptions.push(disposable);
 
   context.subscriptions.push(
-    vscode.commands.registerCommand('searchEverywhereTabs.nextTab', () => activePalette?.cycleTab(1)),
-    vscode.commands.registerCommand('searchEverywhereTabs.previousTab', () => activePalette?.cycleTab(-1)),
-    vscode.commands.registerCommand('searchEverywhereTabs.toggleMatchCase', () => activePalette?.toggle('matchCase')),
-    vscode.commands.registerCommand('searchEverywhereTabs.toggleWholeWord', () => activePalette?.toggle('wholeWord')),
-    vscode.commands.registerCommand('searchEverywhereTabs.toggleRegex', () => activePalette?.toggle('regex'))
+    vscode.commands.registerCommand('doubleShiftSearchTabs.nextTab', () => activePalette?.cycleTab(1)),
+    vscode.commands.registerCommand('doubleShiftSearchTabs.previousTab', () => activePalette?.cycleTab(-1))
   );
 }
 
@@ -642,7 +639,7 @@ function scheduleRefreshFileCache() {
 }
 
 export async function findWorkspaceFiles(): Promise<vscode.Uri[]> {
-  const config = vscode.workspace.getConfiguration('searchEverywhereTabs');
+  const config = vscode.workspace.getConfiguration('doubleShiftSearchTabs');
   const maxFiles = Math.max(1, config.get<number>('maxFiles') || DEFAULT_MAX_FILES);
   const files: vscode.Uri[] = [];
 
@@ -659,8 +656,8 @@ export async function findWorkspaceFiles(): Promise<vscode.Uri[]> {
   if (files.length >= maxFiles && !hasWarnedAboutFileCap) {
     hasWarnedAboutFileCap = true;
     vscode.window.showWarningMessage(
-      `Search Everywhere Tabs indexed the first ${maxFiles} files in this workspace and skipped the rest. ` +
-      'Add large folders to search.exclude or searchEverywhereTabs.excludeFolders, or raise searchEverywhereTabs.maxFiles.'
+      `Double Shift Search Tabs indexed the first ${maxFiles} files in this workspace and skipped the rest. ` +
+      'Add large folders to search.exclude or doubleShiftSearchTabs.excludeFolders, or raise doubleShiftSearchTabs.maxFiles.'
     );
   }
   return files;
@@ -670,7 +667,7 @@ export async function findWorkspaceFiles(): Promise<vscode.Uri[]> {
 // only .git. findFiles cannot express "no setting excludes except .git", so each top-level
 // entry is searched separately with excludes disabled (null) and the root .git is never walked.
 export async function findAllWorkspaceFiles(): Promise<vscode.Uri[]> {
-  const config = vscode.workspace.getConfiguration('searchEverywhereTabs');
+  const config = vscode.workspace.getConfiguration('doubleShiftSearchTabs');
   const maxFiles = Math.max(1, config.get<number>('maxFiles') || DEFAULT_MAX_FILES);
   const files: vscode.Uri[] = [];
 
@@ -754,7 +751,7 @@ interface PaletteData {
 function loadPaletteState(context: vscode.ExtensionContext): PaletteState {
   const saved = context.workspaceState.get<Partial<PaletteState>>(PALETTE_STATE_KEY) || {};
   const state: PaletteState = { ...DEFAULT_PALETTE_STATE, ...saved };
-  const rememberLastTab = vscode.workspace.getConfiguration('searchEverywhereTabs').get<boolean>('rememberLastTab', true);
+  const rememberLastTab = vscode.workspace.getConfiguration('doubleShiftSearchTabs').get<boolean>('rememberLastTab', true);
   if (!rememberLastTab || !SEARCH_TABS.includes(state.tab)) {
     state.tab = 'all';
   }
@@ -840,7 +837,7 @@ async function loadPaletteData(context: vscode.ExtensionContext, state: PaletteS
 
   const openEditors: SearchItem[] = [];
   const addedUris = new Set<string>();
-  const recentUris = context.workspaceState.get<string[]>('searchEverywhereTabs.recentFiles') || [];
+  const recentUris = context.workspaceState.get<string[]>('doubleShiftSearchTabs.recentFiles') || [];
 
   for (const uriStr of recentUris) {
     try {
@@ -1160,7 +1157,7 @@ async function showSearchEverywhere(context: vscode.ExtensionContext, restore?: 
     }
   };
 
-  const config = vscode.workspace.getConfiguration('searchEverywhereTabs');
+  const config = vscode.workspace.getConfiguration('doubleShiftSearchTabs');
   const rememberLastQuery = config.get<boolean>('rememberLastQuery', true);
 
   quickPick.onDidHide(() => {
@@ -1440,7 +1437,7 @@ export async function searchFileContents(
   const queryRegex = built.regex;
   const batchSize = 20;
 
-  const config = vscode.workspace.getConfiguration('searchEverywhereTabs');
+  const config = vscode.workspace.getConfiguration('doubleShiftSearchTabs');
   const excludeExtensionsList = config.get<string[]>('excludeExtensions') || [
     '.zip', '.tar', '.gz', '.7z', '.rar', '.exe', '.dll', '.png', '.jpg', '.jpeg', '.gif', '.ico', '.pdf', '.mp4', '.mp3',
     '.pdb', '.so', '.dylib', '.a', '.lib', '.o', '.obj', '.class', '.jar', '.pyc', '.nupkg', '.woff', '.woff2', '.ttf', '.otf', '.db', '.sqlite'

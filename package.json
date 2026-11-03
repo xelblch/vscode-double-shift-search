@@ -1,6 +1,6 @@
 {
-  "name": "search-everywhere-tabs",
-  "displayName": "Search Everywhere Tabs",
+  "name": "double-shift-search-tabs",
+  "displayName": "Double Shift Search Tabs",
   "description": "JetBrains-style Search Everywhere for VS Code: double Shift opens one palette for files, symbols, actions and text.",
   "version": "1.0.0",
   "publisher": "xelblch",
@@ -40,113 +40,71 @@
   "contributes": {
     "commands": [
       {
-        "command": "searchEverywhereTabs.search",
-        "title": "Search Everywhere Tabs: Open Palette"
+        "command": "doubleShiftSearchTabs.search",
+        "title": "Double Shift Search Tabs: Open Palette"
       },
       {
-        "command": "searchEverywhereTabs.nextTab",
-        "title": "Search Everywhere Tabs: Next Tab"
+        "command": "doubleShiftSearchTabs.nextTab",
+        "title": "Double Shift Search Tabs: Next Tab"
       },
       {
-        "command": "searchEverywhereTabs.previousTab",
-        "title": "Search Everywhere Tabs: Previous Tab"
-      },
-      {
-        "command": "searchEverywhereTabs.toggleMatchCase",
-        "title": "Search Everywhere Tabs: Toggle Match Case"
-      },
-      {
-        "command": "searchEverywhereTabs.toggleWholeWord",
-        "title": "Search Everywhere Tabs: Toggle Whole Word"
-      },
-      {
-        "command": "searchEverywhereTabs.toggleRegex",
-        "title": "Search Everywhere Tabs: Toggle Regex"
+        "command": "doubleShiftSearchTabs.previousTab",
+        "title": "Double Shift Search Tabs: Previous Tab"
       }
     ],
     "menus": {
       "commandPalette": [
         {
-          "command": "searchEverywhereTabs.nextTab",
+          "command": "doubleShiftSearchTabs.nextTab",
           "when": "false"
         },
         {
-          "command": "searchEverywhereTabs.previousTab",
-          "when": "false"
-        },
-        {
-          "command": "searchEverywhereTabs.toggleMatchCase",
-          "when": "false"
-        },
-        {
-          "command": "searchEverywhereTabs.toggleWholeWord",
-          "when": "false"
-        },
-        {
-          "command": "searchEverywhereTabs.toggleRegex",
+          "command": "doubleShiftSearchTabs.previousTab",
           "when": "false"
         }
       ]
     },
     "keybindings": [
       {
-        "command": "searchEverywhereTabs.search",
+        "command": "doubleShiftSearchTabs.search",
         "key": "shift shift"
       },
       {
-        "command": "searchEverywhereTabs.nextTab",
+        "command": "doubleShiftSearchTabs.nextTab",
         "key": "tab",
-        "when": "searchEverywhereTabs.paletteVisible && inQuickOpen"
+        "when": "doubleShiftSearchTabs.paletteVisible && inQuickOpen"
       },
       {
-        "command": "searchEverywhereTabs.previousTab",
+        "command": "doubleShiftSearchTabs.previousTab",
         "key": "shift+tab",
-        "when": "searchEverywhereTabs.paletteVisible && inQuickOpen"
-      },
-      {
-        "command": "searchEverywhereTabs.toggleMatchCase",
-        "key": "alt+c",
-        "mac": "alt+cmd+c",
-        "when": "searchEverywhereTabs.paletteVisible && inQuickOpen"
-      },
-      {
-        "command": "searchEverywhereTabs.toggleWholeWord",
-        "key": "alt+w",
-        "mac": "alt+cmd+w",
-        "when": "searchEverywhereTabs.paletteVisible && inQuickOpen"
-      },
-      {
-        "command": "searchEverywhereTabs.toggleRegex",
-        "key": "alt+r",
-        "mac": "alt+cmd+r",
-        "when": "searchEverywhereTabs.paletteVisible && inQuickOpen"
+        "when": "doubleShiftSearchTabs.paletteVisible && inQuickOpen"
       }
     ],
     "configuration": {
       "type": "object",
-      "title": "Search Everywhere Tabs",
+      "title": "Double Shift Search Tabs",
       "properties": {
-        "searchEverywhereTabs.useSelectionAsQuery": {
+        "doubleShiftSearchTabs.useSelectionAsQuery": {
           "type": "boolean",
           "default": false,
           "description": "Automatically pre-fill the search palette with the text currently selected in the active editor."
         },
-        "searchEverywhereTabs.rememberLastTab": {
+        "doubleShiftSearchTabs.rememberLastTab": {
           "type": "boolean",
           "default": true,
           "description": "Reopen the search palette on the tab (All, Classes, Files, Symbols, Actions, Text) that was last used. When disabled, the palette always opens on All. Filters (match case, whole word, regex, file mask, non-project items) are remembered either way."
         },
-        "searchEverywhereTabs.rememberLastQuery": {
+        "doubleShiftSearchTabs.rememberLastQuery": {
           "type": "boolean",
           "default": true,
           "description": "Reopen the search palette with the last query, selected so typing replaces it. The search runs again, so the results are current. A selection in the editor still wins when useSelectionAsQuery is on."
         },
-        "searchEverywhereTabs.maxRecentFiles": {
+        "doubleShiftSearchTabs.maxRecentFiles": {
           "type": "number",
           "default": 10,
           "description": "The maximum number of recent files to store and display at the top of the search palette."
         },
-        "searchEverywhereTabs.excludeExtensions": {
+        "doubleShiftSearchTabs.excludeExtensions": {
           "type": "array",
           "items": {
             "type": "string"
@@ -187,26 +145,26 @@
           ],
           "description": "A list of file extensions that should be completely ignored when performing a deep text search."
         },
-        "searchEverywhereTabs.defaultExcludes": {
+        "doubleShiftSearchTabs.defaultExcludes": {
           "type": "boolean",
           "default": true,
-          "markdownDescription": "Hide common dependency, build, cache and tool folders: `node_modules`, `.venv`, `venv`, `bower_components`, `dist`, `build`, `out`, `.next`, `.nuxt`, `.output`, `coverage`, `__pycache__`, `.pytest_cache`, `.mypy_cache`, `.tox`, `.cache`, `.gradle`, `.git`, `.idea`, `.vscode-test`, `.omc`, `.playwright-mcp`. `#searchEverywhereTabs.excludeFolders#` adds to this list. The Include Non-Project Items button still shows everything."
+          "markdownDescription": "Hide common dependency, build, cache and tool folders: `node_modules`, `.venv`, `venv`, `bower_components`, `dist`, `build`, `out`, `.next`, `.nuxt`, `.output`, `coverage`, `__pycache__`, `.pytest_cache`, `.mypy_cache`, `.tox`, `.cache`, `.gradle`, `.git`, `.idea`, `.vscode-test`, `.omc`, `.playwright-mcp`. `#doubleShiftSearchTabs.excludeFolders#` adds to this list. The Include Non-Project Items button still shows everything."
         },
-        "searchEverywhereTabs.excludeFolders": {
+        "doubleShiftSearchTabs.excludeFolders": {
           "type": "array",
           "items": {
             "type": "string"
           },
           "default": [],
-          "description": "Folder names to hide from search results, on top of files.exclude, search.exclude and the built-in list (searchEverywhereTabs.defaultExcludes). Names may use * and ? wildcards, e.g. \"gtaapi-tec-*\" to hide git worktree copies."
+          "description": "Folder names to hide from search results, on top of files.exclude, search.exclude and the built-in list (doubleShiftSearchTabs.defaultExcludes). Names may use * and ? wildcards, e.g. \"gtaapi-tec-*\" to hide git worktree copies."
         },
-        "searchEverywhereTabs.maxFiles": {
+        "doubleShiftSearchTabs.maxFiles": {
           "type": "number",
           "default": 100000,
           "minimum": 1,
           "description": "The maximum number of files to index for the search palette. Acts as a safety cap for very large workspaces."
         },
-        "searchEverywhereTabs.deprioritizedFolders": {
+        "doubleShiftSearchTabs.deprioritizedFolders": {
           "type": "array",
           "items": {
             "type": "string"
