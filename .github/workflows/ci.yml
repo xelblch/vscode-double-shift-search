@@ -15,6 +15,8 @@ jobs:
   build:
     name: Lint, test and package
     runs-on: ubuntu-latest
+    outputs:
+      vsix: ${{ steps.package.outputs.vsix }}
     steps:
       - uses: actions/checkout@v4
 
@@ -40,3 +42,43 @@ jobs:
           name: ${{ steps.package.outputs.vsix }}
           path: ${{ steps.package.outputs.vsix }}
           if-no-files-found: error
+          retention-days: 7
+
+  # Runs on v* tags only. The tag must match the version in package.json, e.g. v1.0.1 for 1.0.1.
+  publish:
+    name: Publish
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    # id-token lets vsce exchange a GitHub OIDC token through the Marketplace Trusted Publishing policy.
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      # Job level so the Open VSX step's if can see it; a step's own env is not visible to its if.
+      OVSX_PAT: ${{ secrets.OVSX_PAT }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Check tag matches package.json version
+        run: |
+          version=$(node -p "require('./package.json').version")
+          if [ "${GITHUB_REF_NAME}" != "v${version}" ]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match package.json version ${version}"
+            exit 1
+          fi
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build.outputs.vsix }}
+
+      - name: Publish to VS Code Marketplace
+        run: npx @vscode/vsce publish --oidc --packagePath "${{ needs.build.outputs.vsix }}"
+
+      - name: Publish to Open VSX
+        if: env.OVSX_PAT != ''
+        run: npx ovsx publish "${{ needs.build.outputs.vsix }}"

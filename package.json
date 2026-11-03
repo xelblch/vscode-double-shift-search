@@ -5,6 +5,7 @@
   "version": "1.0.0",
   "publisher": "xelblch",
   "author": "xelblch <https://github.com/xelblch>",
+  "license": "MIT",
   "icon": "media/icon.png",
   "repository": {
     "type": "git",
